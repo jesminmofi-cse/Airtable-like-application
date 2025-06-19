@@ -16,11 +16,20 @@ const TablePg = () => {
   const [message, setMessage] = useState('');
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [history, setHistory]=useState([]);
+  const [redoStack, setRedoStack]=useState([]);
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(''), 3000);
       return () => clearTimeout(timer);  }}, [message]);
+  const Maxhistory=50;
+  const saveSnapshot=()=>{
+    const snapshot={columns: JSON.parse(JSON.stringify(columns)), rows: JSON.parse(JSON.stringify(rows)) };
+    setHistory((prev)=>[...prev.slice(-Maxhistory + 1), snapshot]);
+    setRedoStack([]);
+  }
   const addColumn = () => {
+    saveSnapshot();
     const label = prompt('Enter column name:');
     const type = prompt('Enter column type(text, number, email, date, checkbox, dropdown, textarea, url, phone, currency):', 'text');
     if (!label || !type || !label.trim()) return;
@@ -35,15 +44,28 @@ const TablePg = () => {
     if (type === 'dropdown') {
       const opts = prompt('Enter dropdown options (comma separated):', 'Option1, Option2');
       newCol.options = opts.split(',').map((o) => o.trim());
-      if (!opts.trim()){
-        alert('Dropdown options cannot be empty');
-        return;
-      }
     }
     setColumns([...columns, newCol]);
     setRows(rows.map((row) => ({ ...row, [label]: '' })));
   };
+  const undo=()=>{
+    if (history.length===0) return;
+    const lastState=history[history.length-1];
+    setRedoStack((prev)=>[...prev,{columns,rows}]);
+    setColumns(lastState.columns);
+    setRows(lastState.rows);
+    setHistory((prev)=>prev.slice(0,-1));
+  }
+  const redo=()=>{
+    if (redoStack.length === 0) return;
+    const nextState = redoStack[redoStack.length - 1];
+    setHistory((prev) => [...prev, { columns, rows }]);
+    setColumns(nextState.columns);
+    setRows(nextState.rows);
+    setRedoStack((prev) => prev.slice(0, -1));
+  }
   const changeColumnType = (index, newType) => {
+    saveSnapshot();
     const updated = [...columns];
     const col = updated[index];
     if (newType === 'dropdown' && !col.options) {
@@ -61,6 +83,7 @@ const TablePg = () => {
     setColumns(updated);
   };
   const renameColumn = (index, newName) => {
+    saveSnapshot();
     if (!newName.trim()) {
       alert('Column name cannot be empty');
       return;
@@ -89,12 +112,19 @@ const TablePg = () => {
     });
     setRows([...rows, newRow]);
   };
+  const cellChangeTimeout = useRef(null);
+
   const handleCellChange = (rowIndex, columnName, value) => {
     const updatedRows = [...rows];
     updatedRows[rowIndex][columnName] = value;
     setRows(updatedRows);
+    clearTimeout(cellChangeTimeout.current);
+    cellChangeTimeout.current=setTimeout(()=>{
+      saveSnapshot();
+    },800);
   };
   const deleteColumn = (index) => {
+    saveSnapshot();
     const colToDelete = columns[index].label;
     setColumns(columns.filter((_, i) => i !== index));
     setRows(rows.map((row) => {
@@ -104,16 +134,12 @@ const TablePg = () => {
     }));
   };
   const deleteRow = (rowIndex) => {
+    saveSnapshot();
     const updatedRows = [...rows];
     updatedRows.splice(rowIndex, 1);
     setRows(updatedRows);
   };
-  const type = prompt('Enter column type(text, number, email, date, checkbox, dropdown, textarea, url, phone, currency):', 'text');
-  const validTypes=['text', 'number', 'email', 'date', 'checkbox', 'dropdown', 'textarea', 'url', 'phone', 'currency'];
-  if (!validTypes.includes(type)){
-    alert('Invalid type entered');
-    return;
-  }
+  
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateURL = (url) => /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(url);
   const saveTable = async () => {
@@ -172,7 +198,7 @@ const TablePg = () => {
     <>
       <DownloadMenu tableName={tableName} tableRef={tableRef} columns={columns} rows={rows} theme={localStorage.getItem('theme') || 'light'} />
       <div style={{marginBottom:'1rem'}}>
-        <label>Sort</label>
+        <label>Sort by:&nbsp</label>
         <select value={sortField} onChange={(e)=>setSortField(e.target.value)}>
           <option value=''>--Select Column--</option>
           {columns.map((col) => (
@@ -196,6 +222,8 @@ const TablePg = () => {
           <button onClick={addColumn}>Add Column</button>
           <button onClick={addRow}>Add Row</button>
           <button onClick={saveTable}>Save</button>
+          <button onClick={undo} disabled={history.length === 0}>Undo</button>
+          <button onClick={redo} disabled={redoStack.length === 0}>Redo</button>
         </div> {message && <p className='save-message'>{message}</p>}
         <div ref={tableRef} className='table-container'>
           <table className="table">
@@ -241,14 +269,14 @@ const TablePg = () => {
                               {getCurrencySymbol(col.currency)}
                             </span>
                           )}</div>
-                             )}
+                      )}
                     </td>
                   ))}<td> <button onClick={() => deleteRow(rowIndex)} className='delete-btn'>Delete</button> </td> </tr>
               ))}
             </tbody>
-            </table>
-            </div>
-            </div></>
+          </table>
+        </div>
+      </div></>
   );
 };
 export default TablePg;
