@@ -1,0 +1,51 @@
+.history-page{
+    padding:2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: white;
+    min-height: 100hv;
+}
+h2{
+    color: grey;
+    margin-bottom: 1rem;
+}
+.error-msg{
+    color: crimson;
+    font-weight: bold;
+    
+}
+.empty-msg{
+    font-style: italic;
+    color: grey;
+}
+.table-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap:1.5rem;
+}
+.history-card{
+    transform: scale(1.02);
+    box-shadow: 0  4px 12px rgba(0, 0, 0, 0.15);
+
+}
+.history-card h3{
+    margin-top:0 ;
+    color: blue;
+    
+}
+.history-card p{
+    margin: 0.3rem 0;
+    color: grey;
+}
+.history-card button{
+    margin-top: 0.7rem;
+    padding: 0.5rem 1rem;
+    background-color: lightblue;
+    color: aliceblue;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.history-card button:hover{
+    background-color: blue;
+}

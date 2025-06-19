@@ -1,0 +1,87 @@
+.table-page{
+    padding:2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+.table-name-input{
+    padding:10px;
+    margin-bottom:1rem;
+    font-size:20px;
+    width:250px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.btn-group{
+    margin-bottom: 1rem;
+}
+.button{
+    margin: 0 0.5rem;
+    padding:0.5rem 1rem;
+    color: #ccc;
+    border: none;
+    border-radius: 5px;
+    background: #0066cc;
+    cursor: pointer;
+}
+button:hover{
+    background: #005bb5;
+}
+.save-message{
+    margin-top: 1rem;
+    color: green;
+    font-weight:bold;
+}
+.table-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.table th, .table td{
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+input {
+    width:100%;
+    padding: 5px;
+}
+.column-input{
+    font-weight: bold;
+    text-align:center;
+}
+.column-header{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+.delete-btn{
+    color: white;
+    font-size: 14px;
+    cursor:pointer;
+    padding: 2px 4px;
+}
+.delete-btn:hover{
+    color:aliceblue;
+}
+.editable-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.editable-table th, .editable-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.editable-table input {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  background-color: #f9f9f9;
+}
