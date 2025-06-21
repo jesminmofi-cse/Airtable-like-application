@@ -55,7 +55,8 @@ function validateRow(fields, row){
                 break;
               
             default:
-                throw new Error(`Unsupported field type "${type}" in field "${label}.`);
+                throw new Error(`Unsupported field type "${type}" in field "${label}".`);
+
         }
     }
 }
@@ -132,4 +133,20 @@ const updateTableById= async(req,res)=>{
         res.status(500).json({msg:'Error updating table'});
     }
 };
-module.exports={createTable, getUserTables, getTableById, updateTableById};
+const deleteTable =async(req,res)=>{
+      const {tableId} =req.params;
+      const userId= req.userId;
+      try{
+        const table= await Table.findById(tableId);
+        if (!table) return res.status(404).json({msg:'Table not found'});
+        if (table.createdBy.toString()!==userId){ 
+            return res.status(403).json({msg:'Unauthorized'});
+        }
+        await table.deleteOne();
+        res.status(200).json({msg:'Table deleted successfully'});
+      
+      }catch(err){
+        res.status(500).json({msg:'Error deleting table', error:err.message});
+      }
+    };
+module.exports={createTable, getUserTables, getTableById, updateTableById, deleteTable};

@@ -3,9 +3,10 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: white;
     min-height: 100hv;
+
 }
 h2{
-    color: grey;
+    color:black;
     margin-bottom: 1rem;
 }
 .error-msg{
@@ -15,7 +16,7 @@ h2{
 }
 .empty-msg{
     font-style: italic;
-    color: grey;
+    color: rgb(249, 246, 246);
 }
 .table-list{
     display: grid;
@@ -25,21 +26,28 @@ h2{
 .history-card{
     transform: scale(1.02);
     box-shadow: 0  4px 12px rgba(0, 0, 0, 0.15);
-
+    margin: 2px;
+    border: 1px solid  black;
+    border-radius: 7px;
+    transition: all 0.3s ease;
 }
 .history-card h3{
-    margin-top:0 ;
-    color: blue;
-    
+    margin-top:10px ;
+    color:white;
+    width: 80%;
+    text-align: center;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: rgb(10, 22, 125);
 }
 .history-card p{
     margin: 0.3rem 0;
-    color: grey;
+    color: rgb(21, 20, 20);
 }
 .history-card button{
     margin-top: 0.7rem;
     padding: 0.5rem 1rem;
-    background-color: lightblue;
+    background-color: dodgerblue;
     color: aliceblue;
     border-radius: 6px;
     cursor: pointer;
@@ -47,5 +55,22 @@ h2{
     transition: background-color 0.2s;
 }
 .history-card button:hover{
-    background-color: blue;
+    background-color: rgb(45, 45, 186);
+}
+.extra{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.delete-btn{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: transparent;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.delete-btn:hover{
+    color: red;
 }

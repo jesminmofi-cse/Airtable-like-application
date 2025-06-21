@@ -12,7 +12,7 @@ const Dashboard=()=>{
         try{
             const token=localStorage.getItem('token');
             const userRes=await axios.get('http://localhost:5000/api/auth/me',{
-                    headers:{Authorization:`${token}`},
+                    headers:{Authorization:`Bearer ${token}`},
             });
             localStorage.setItem('username', userRes.data.name);
             setUsername(userRes.data.name);
@@ -37,13 +37,6 @@ const Dashboard=()=>{
     <div className='dashboard'>
         <header className='dashboard-header'>
             <div className='logo'>TableCraft</div>
-            <nav>
-                <ul>
-                    <li>Tables</li>
-                    <li>About</li>
-                    <li onClick={handleLogout}>Logout</li>
-                </ul>
-            </nav>
         <button onClick={handleLogout} className='btn'>
             Login/Register
         </button>
@@ -57,7 +50,7 @@ const Dashboard=()=>{
        
         <div className='table-list'>
             {tables.length===0?(
-                <p>We create the tables.Enjoy and play with rows and columns.</p>
+                <p>We create the tables!!! <br/>Enjoy and play with rows and columns.</p>
             ):(
               
                 tables.map((table,idx)=>(

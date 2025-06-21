@@ -1,43 +1,46 @@
-const Row=require('../models/Row');
-const Table=require('../models/Table');
-const addRow=async(req,res)=>{
-    const {tableId}=req.params;
-    const rowValues=req.body;
-    const userId=req.userId;
-    try{
-        const table=await Table.findById(tableId);
-        if (!table) return res.status(404).json({msg: 'Table not found'});
-        if (table.createdBy.toString()!==userId) return res.status(403).json({msg:'Unauthorized'});
-        const errors=[];
-        for (const field of table.fields){
-            const val=rowValues[field.label];
-            if (field.required &&(val===undefined || val=== '')){
+const Row = require('../models/Row');
+const Table = require('../models/Table');
+const addRow = async (req, res) => {
+    const { tableId } = req.params;
+    const rowValues = req.body;
+    const userId = req.userId;
+       try {
+        const table = await Table.findById(tableId);
+        if (!table) return res.status(404).json({ msg: 'Table not found' });
+        if (table.createdBy.toString() !== userId) return res.status(403).json({ msg: 'Unauthorized' });
+          const errors = [];
+          for (const field of table.fields) {
+            const val = rowValues[field.label];
+            if (field.required && (val === undefined || val === '')) {
                 errors.push(`${field.label} is required`);
                 continue;
-            }
-            if (val !==undefined && val !==''){
-                switch(field.type){
+              }
+             if (val !== undefined && val !== '') {
+                switch (field.type) {
                     case 'number':
-                        if (isNaN(val)) error.push('${field.label} must be a number');
+                        if (isNaN(val)) errors.push(`${field.label} must be a number`);
                         break;
                     case 'checkbox':
-                        if (typeof val!== 'boolean') errors.push(`${field.label} must be true/false`);
+                        if (typeof val !== 'boolean') errors.push(`${field.label} must be true/false`);
                         break;
                     case 'dropdown':
-                        if (!field.options.includes(val)) errors.push(`{field.label} must be a valid date`);
+                        if (!field.options.includes(val)) errors.push(`${field.label} must be a valid option`);
                         break;
-                }
-            }
-        }
-        if (errors.length>0) return res.status(400).json({errors});
-        const newRow=await Row.create({
+                } } }
+        if (errors.length > 0) return res.status(400).json({ errors });
+        const newRow = await Row.create({
             tableId,
-            values:rowValues,
-            createdBy:userId
+            values: rowValues,
+            createdBy: userId
         });
         res.status(201).json(newRow);
-    }catch(err){
-        res.status(500).json({msg: 'Failed to add row', error:err.message});
-    }
+    } catch (err) {
+        res.status(500).json({ msg: 'Failed to add row', error: err.message });
+    }};
+const updateRow = async (req, res) => {
+    res.status(200).json({ msg: 'updateRow is working (placeholder)' });
 };
-module.exports={addRow};
+const deleteRow = async (req, res) => {
+    res.status(200).json({ msg: 'deleteRow is working (placeholder)' });
+};
+module.exports = { addRow, updateRow, deleteRow };

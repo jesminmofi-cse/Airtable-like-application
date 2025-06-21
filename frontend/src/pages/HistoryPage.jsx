@@ -21,6 +21,20 @@ const HistoryPage = () => {
       } finally { setLoading(false);}
     };fetchTables();
   }, []);
+  const handleDelete =async(tableId)=>{
+    const confirmed = window.confirm('Are you sure you want to delete this table?');
+    if (!confirmed) return;
+    try {
+      const token = localStorage.getItem('token');
+    await axios.delete(`http://localhost:5000/api/table/${tableId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setTables(tables.filter((table) => table._id !== tableId));
+  }catch (err) {
+    console.error('Error deleting table:', err);
+    alert('Failed to delete the table.');
+  }
+};
   const handleEdit = (tableId) => {
     navigate(`/edit/${tableId}`);
   };
@@ -37,40 +51,21 @@ const HistoryPage = () => {
         <div className="table-list">
           {tables.map((table) => (
   <div key={table._id} className="history-card">
+    <button  className="delete-btn" onClick={() => handleDelete(table._id)} title="Delete table" >
+    ✖
+  </button>
+    <div className='extra'>
     <h3>{table.name}</h3>
     <p><strong>Fields:</strong> {table.fields.length}</p>
     <p><strong>Created:</strong> {new Date(table.createdAt).toLocaleString()}</p>
     <p><strong>Last Updated:</strong> {new Date(table.updatedAt).toLocaleString()}</p>
-
-    {/* Full Table Preview */}
-    <div className="table-preview-wrapper">
-      <table className="table-preview">
-        <thead>
-          <tr>
-            {table.fields.map((field, idx) => (
-              <th key={idx}>{field.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {(table.data || []).map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {table.fields.map((field, colIndex) => (
-                <td key={colIndex}>{row[field.label] || '-'}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
     <button onClick={() => handleEdit(table._id)}>Edit Table</button>
-  </div>
+  </div></div>
 ))}
-
         </div>
       )}
     </div>
+   
   );
 };
 export default HistoryPage;

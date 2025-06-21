@@ -91,5 +91,13 @@ button:hover{
 .table-card h3{
     margin-bottom:10px ;
     color:#333;
-    
+}
+.table-list p{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.dashboard-main{
+    margin:10px;
+}
+.left-section{
+    margin-block: 30px;
 }
