@@ -35,6 +35,10 @@ const TablePg = () => {
     if (type === 'dropdown') {
       const opts = prompt('Enter dropdown options (comma separated):', 'Option1, Option2');
       newCol.options = opts.split(',').map((o) => o.trim());
+      if (!opts.trim()){
+        alert('Dropdown options cannot be empty');
+        return;
+      }
     }
     setColumns([...columns, newCol]);
     setRows(rows.map((row) => ({ ...row, [label]: '' })));
@@ -104,6 +108,12 @@ const TablePg = () => {
     updatedRows.splice(rowIndex, 1);
     setRows(updatedRows);
   };
+  const type = prompt('Enter column type(text, number, email, date, checkbox, dropdown, textarea, url, phone, currency):', 'text');
+  const validTypes=['text', 'number', 'email', 'date', 'checkbox', 'dropdown', 'textarea', 'url', 'phone', 'currency'];
+  if (!validTypes.includes(type)){
+    alert('Invalid type entered');
+    return;
+  }
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateURL = (url) => /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(url);
   const saveTable = async () => {
@@ -126,10 +136,8 @@ const TablePg = () => {
         if (col.type === 'currency' && val && isNaN(val)) {
           setMessage(`Invalid currency value in row ${i + 1}, column "${col.label}"`);
           return;
-        }
-      }
-    }
-    try {
+        }}
+    }try {
       const token = localStorage.getItem('token');
       await axios.post(
         'http://localhost:5000/api/table',
@@ -143,15 +151,13 @@ const TablePg = () => {
             currency: col.currency || null,
           })),
           data: nonEmptyRows,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+        },{ headers: { Authorization: `Bearer ${token}` 
+      }});
       setMessage('Table saved successfully');
     } catch (error) {
       console.error('Error saving the table:', error);
       setMessage('Error saving');
-    }
-  };
+    }};
    const sortedRows=[...rows];
           if(sortField){
             sortedRows.sort((a,b)=>{
@@ -166,7 +172,7 @@ const TablePg = () => {
     <>
       <DownloadMenu tableName={tableName} tableRef={tableRef} columns={columns} rows={rows} theme={localStorage.getItem('theme') || 'light'} />
       <div style={{marginBottom:'1rem'}}>
-        <label>Sort by:&nbsp</label>
+        <label>Sort</label>
         <select value={sortField} onChange={(e)=>setSortField(e.target.value)}>
           <option value=''>--Select Column--</option>
           {columns.map((col) => (
@@ -177,6 +183,7 @@ const TablePg = () => {
         <select value={sortOrder} onChange={(e)=> setSortOrder(e.target.value)}>
           <option value='asc'>A-Z</option>
           <option value='desc'>Z-A</option>
+          
         </select>
       </div>
       <div className='table-page'>
@@ -205,16 +212,15 @@ const TablePg = () => {
                       <button onClick={() => deleteColumn(idx)} className='delete-btn'>Delete</button>
                     </div>
                   </th>
-                ))}
-                         <th>Action</th>
+                ))}<th>Action</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, rowIndex) => (
                         <tr key={rowIndex}>
-                  {columns.map((col, colIndex) => (
+                           {columns.map((col, colIndex) => (
                     <td key={colIndex}>
-                      {col.type === 'textarea' ? (
+                            {col.type === 'textarea' ? (
                         <textarea value={row[col.label] || ''} onChange={(e) => handleCellChange(rowIndex, col.label, e.target.value)} />
                       ) : col.type === 'dropdown' ? (
                         <select value={row[col.label]} onChange={(e) => handleCellChange(rowIndex, col.label, e.target.value)}>
@@ -222,7 +228,7 @@ const TablePg = () => {
                           {(col.options || []).map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
                                    </select>
                       ) : col.type === 'checkbox' ? (
-                        <input type='checkbox' checked={row[col.label] === true || row[col.label] === 'true'} onChange={(e) => handleCellChange(rowIndex, col.label, e.target.checked)} />
+                                   <input type='checkbox' checked={row[col.label] === true || row[col.label] === 'true'} onChange={(e) => handleCellChange(rowIndex, col.label, e.target.checked)} />
                       ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <input type={col.type === 'phone' ? 'tel' : col.type === 'currency' ? 'number' : col.type} value={row[col.label] || ''} onChange={(e) => {
@@ -234,18 +240,15 @@ const TablePg = () => {
                             <span style={{ marginLeft: '6px', fontWeight: 'bold', color: '#4CAF50' }} title={col.currency}>
                               {getCurrencySymbol(col.currency)}
                             </span>
-                          )}
-                        </div>
-                      )}
+                          )}</div>
+                             )}
                     </td>
-                  ))}
-                  <td> <button onClick={() => deleteRow(rowIndex)} className='delete-btn'>Delete</button> </td>
-                </tr>
+                  ))}<td> <button onClick={() => deleteRow(rowIndex)} className='delete-btn'>Delete</button> </td> </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      </div></>
+            </table>
+            </div>
+            </div></>
   );
 };
 export default TablePg;
