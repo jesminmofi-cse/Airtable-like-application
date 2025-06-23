@@ -11,7 +11,7 @@ const HistoryPage = () => {
     const fetchTables = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/table/history', {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table/history`, {
           headers: { Authorization: `Bearer ${token}`, },
         });
         setTables(response.data);
@@ -26,7 +26,7 @@ const HistoryPage = () => {
     if (!confirmed) return;
     try {
       const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/api/table/${tableId}`, {
+    await axios.delete(`${process.env.REACT_APP_BASE_URL}/api/table/${tableId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setTables(tables.filter((table) => table._id !== tableId));
