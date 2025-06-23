@@ -20,7 +20,7 @@ const Register=()=>{
         e.preventDefault();
         setError('');
         try{
-            const res=await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/register`, formData);
+            const res=await axios.post(`https://airtable-like-application-3.onrender.com/api/auth/register`, formData);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('username', res.data.user.name);
             navigate('/');
