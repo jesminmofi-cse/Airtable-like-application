@@ -11,7 +11,7 @@ const rowRoutes=require('./routes/rowRoutes');
 
 app.use(express.json());
 
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: 'https://airtable-like-application.vercel.app', credentials: true }));
 app.use('/api/auth',authRoutes);
 app.use('/api/table',tableRoutes);
 app.use('/api/rows', rowRoutes);
