@@ -11,12 +11,12 @@ const Dashboard=()=>{
      const fetchData=async ()=>{
         try{
             const token=localStorage.getItem('token');
-            const userRes=await axios.get('http://localhost:5000/api/auth/me',{
+            const userRes=await axios.get('${process.env.REACT_APP_BASE_URL}/api/auth/me',{
                     headers:{Authorization:`Bearer ${token}`},
             });
             localStorage.setItem('username', userRes.data.name);
             setUsername(userRes.data.name);
-            const tableRes=await axios.get('http://localhost:5000/api/table',{
+            const tableRes=await axios.get('${process.env.REACT_APP_BASE_URL}/api/table',{
                 headers:{Authorization:`Bearer ${token}`},
             });
             setTables(tableRes.data.tables); 
