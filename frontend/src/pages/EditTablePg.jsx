@@ -27,7 +27,7 @@ const EditTablePg=()=>{
     const fetchTable=async()=>{
       try{
         const token=localStorage.getItem('token');
-        const res= await axios.get(`http://localhost:5000/api/table/${id}`,{
+        const res= await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table/${id}`,{
           headers:{Authorization:`Bearer ${token}`},
         });
         setTableName(res.data.name);
@@ -124,7 +124,7 @@ const saveChanges = async () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/table/${id}`,
+        `${process.env.REACT_APP_BASE_URL}/api/table/${id}`,
         { name: tableName, fields, data: rows },
         { headers: { Authorization: `Bearer ${token}` } }
       ); setMessage('Changes saved successfully!');
