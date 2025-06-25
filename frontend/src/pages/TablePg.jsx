@@ -166,7 +166,8 @@ const TablePg = () => {
     }try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/table',
+        'https://airtable-backend.onrender.com/api/table',
+        
         {
           name: tableName,
           fields: columns.map((col) => ({
@@ -198,7 +199,7 @@ const TablePg = () => {
     <>
       <DownloadMenu tableName={tableName} tableRef={tableRef} columns={columns} rows={rows} theme={localStorage.getItem('theme') || 'light'} />
       <div style={{marginBottom:'1rem'}}>
-        <label>Sort by:&nbsp</label>
+        <label>Sort by:</label>
         <select value={sortField} onChange={(e)=>setSortField(e.target.value)}>
           <option value=''>--Select Column--</option>
           {columns.map((col) => (
