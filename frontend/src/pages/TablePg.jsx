@@ -143,59 +143,72 @@ const TablePg = () => {
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateURL = (url) => /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(url);
   const saveTable = async () => {
-    if (!tableName.trim()) return setMessage('Please enter a table name');
-    const nonEmptyRows = rows.filter(row =>
-      Object.values(row).some(value => value !== '' && value !== null)
-    );
-    for (let i = 0; i < nonEmptyRows.length; i++) {
-      const row = nonEmptyRows[i];
-      for (let col of columns) {
-        const val = row[col.label];
-        if (col.type === 'email' && val && !validateEmail(val)) {
-          setMessage(`Invalid email in row ${i + 1}, column "${col.label}"`);
-          return;
-        }
-        if (col.type === 'url' && val && !validateURL(val)) {
-          setMessage(`Invalid URL in row ${i + 1}, column "${col.label}"`);
-          return;
-        }
-        if (col.type === 'currency' && val && isNaN(val)) {
-          setMessage(`Invalid currency value in row ${i + 1}, column "${col.label}"`);
-          return;
-        }}
-    }try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'https://airtable-backend.onrender.com/api/table',
-        
-        {
-          name: tableName,
-          fields: columns.map((col) => ({
-            label: col.label,
-            type: col.type,
-            required: false,
-            options: col.options || [],
-            currency: col.currency || null,
-          })),
-          data: nonEmptyRows,
-        },{ headers: { Authorization: `Bearer ${token}` 
-      }});
-      setMessage('Table saved successfully');
-   } catch (error) {
-  console.error('❌ Error saving the table:', error);
+  if (!tableName.trim()) return setMessage('Please enter a table name');
 
-  // If it's an Axios error
-  if (error.response) {
-    console.error('🚨 Server responded with:', error.response.data);
-    setMessage(`Server error: ${error.response.data?.message || 'Unknown error'}`);
-  } else if (error.request) {
-    console.error('📡 No response received. Request was:', error.request);
-    setMessage('No response from server. Please check your internet or server.');
-  } else {
-    console.error('🧠 Error setting up request:', error.message);
-    setMessage(`Error: ${error.message}`);
+  const nonEmptyRows = rows.filter(row =>
+    Object.values(row).some(value => value !== '' && value !== null)
+  );
+
+  for (let i = 0; i < nonEmptyRows.length; i++) {
+    const row = nonEmptyRows[i];
+    for (let col of columns) {
+      const val = row[col.label];
+      if (col.type === 'email' && val && !validateEmail(val)) {
+        setMessage(`Invalid email in row ${i + 1}, column "${col.label}"`);
+        return;
+      }
+      if (col.type === 'url' && val && !validateURL(val)) {
+        setMessage(`Invalid URL in row ${i + 1}, column "${col.label}"`);
+        return;
+      }
+      if (col.type === 'currency' && val && isNaN(val)) {
+        setMessage(`Invalid currency value in row ${i + 1}, column "${col.label}"`);
+        return;
+      }
+    }
+  }
+
+  try {
+    const token = localStorage.getItem('token');
+
+    const payload = {
+      name: tableName,
+      fields: columns.map((col) => ({
+        label: col.label,
+        type: col.type,
+        required: false,
+        options: col.options || [],
+        currency: col.currency || null,
+      })),
+      data: nonEmptyRows,
+    };
+
+    console.log("🔍 Saving payload:", payload);
+
+    await axios.post('https://airtable-backend.onrender.com/api/table', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    setMessage('✅ Table saved successfully!');
+  } catch (error) {
+    console.error('❌ Error saving the table:', error);
+
+    if (error.response) {
+      console.error('🚨 Server responded with:', error.response.data);
+      setMessage(`Server error: ${error.response.data?.message || 'Unknown error'}`);
+    } else if (error.request) {
+      console.error('📡 No response received. Request was:', error.request);
+      setMessage('No response from server. Please check your internet or server.');
+    } else {
+      console.error('🧠 Error setting up request:', error.message);
+      setMessage(`Error: ${error.message}`);
+    }
   }
 };
+
    const sortedRows=[...rows];
           if(sortField){
             sortedRows.sort((a,b)=>{
