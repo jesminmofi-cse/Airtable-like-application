@@ -8,49 +8,40 @@ const Dashboard = () => {
     const [username, setUsername] = useState('');
     const navigate = useNavigate();
 
-   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log(' LocalStorage Token:', token);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
 
-    if (!token) {
-        console.warn(' No token. Redirecting to login...');
-        navigate('/login');
-        return;
-    }
-
-    const fetchData = async () => {
-        try {
-            console.log(' Base URL:', process.env.REACT_APP_BASE_URL);
-
-            const userRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/auth/me`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            console.log(' User response:', userRes.data);
-            setUsername(userRes.data.name);
-
-           const tableRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table/history`, {
-    headers: { Authorization: `Bearer ${token}` },
-});
-
-
-            console.log('Tables response:', tableRes.data.tables);
-            setTables(tableRes.data.tables);
-        } catch (error) {
-            console.error(' Error:', error.response?.status, error.response?.data || error.message);
-
-            if (error.response?.status === 401) {
-                console.warn('Token is invalid or expired. Logging out...');
-            }
-
-            localStorage.removeItem('token');
+        if (!token) {
+            console.warn('🚫 No token found. Redirecting to login...');
             navigate('/login');
+            return;
         }
-    };
 
-    fetchData();
-}, [navigate]);
+        const fetchData = async () => {
+            try {
+                const baseURL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
+                const userRes = await axios.get(`${baseURL}/api/auth/me`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setUsername(userRes.data.name);
+                localStorage.setItem('username', userRes.data.name);
+
+                const tableRes = await axios.get(`${baseURL}/api/table/history`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setTables(tableRes.data.tables);
+            } catch (error) {
+                console.error('❌ Error fetching the data:', error.response?.data || error.message);
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -80,8 +71,8 @@ const Dashboard = () => {
                 <div className='table-list'>
                     {tables.length === 0 ? (
                         <p>
-                            No tables yet! <br />
-                            Create one and unleash your inner spreadsheet wizard 🧙‍♀️📊
+                            We create the tables!!! <br />
+                            Enjoy and play with rows and columns.
                         </p>
                     ) : (
                         tables.map((table, idx) => (
