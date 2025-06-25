@@ -29,9 +29,10 @@ const Dashboard = () => {
             console.log(' User response:', userRes.data);
             setUsername(userRes.data.name);
 
-            const tableRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+           const tableRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+});
+
 
             console.log('Tables response:', tableRes.data.tables);
             setTables(tableRes.data.tables);
