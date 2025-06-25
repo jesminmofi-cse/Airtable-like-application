@@ -185,7 +185,7 @@ const TablePg = () => {
 
     console.log("🔍 Saving payload:", payload);
 
-    await axios.post('https://airtable-backend.onrender.com/api/tables', payload, {
+    await axios.post('https://airtable-backend.onrender.com/api/table', payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
