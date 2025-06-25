@@ -8,44 +8,48 @@ const Dashboard = () => {
     const [username, setUsername] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
+   useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log(' LocalStorage Token:', token);
 
-        if (!token) {
-            console.warn('🚫 No token found. Redirecting to login...');
-            navigate('/login');
-            return;
-        }
+    if (!token) {
+        console.warn(' No token. Redirecting to login...');
+        navigate('/login');
+        return;
+    }
 
-        const fetchData = async () => {
-            try {
-                console.log("🔐 Using BASE URL:", process.env.REACT_APP_BASE_URL);
+    const fetchData = async () => {
+        try {
+            console.log(' Base URL:', process.env.REACT_APP_BASE_URL);
 
-                // Fetch authenticated user info
-                const userRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/auth/me`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const userRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/auth/me`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                console.log("✅ User data:", userRes.data);
-                localStorage.setItem('username', userRes.data.name);
-                setUsername(userRes.data.name);
+            console.log(' User response:', userRes.data);
+            setUsername(userRes.data.name);
 
-                // Fetch user tables
-                const tableRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const tableRes = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/table`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-                console.log("📋 Tables:", tableRes.data.tables);
-                setTables(tableRes.data.tables);
-            } catch (error) {
-                console.error('❌ Failed to fetch data:', error.response?.data || error.message);
-                localStorage.removeItem('token');
-                navigate('/login');
+            console.log('Tables response:', tableRes.data.tables);
+            setTables(tableRes.data.tables);
+        } catch (error) {
+            console.error(' Error:', error.response?.status, error.response?.data || error.message);
+
+            if (error.response?.status === 401) {
+                console.warn('Token is invalid or expired. Logging out...');
             }
-        };
 
-        fetchData();
-    }, [navigate]);
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
+    };
+
+    fetchData();
+}, [navigate]);
+
 
     const handleLogout = () => {
         localStorage.removeItem('token');
