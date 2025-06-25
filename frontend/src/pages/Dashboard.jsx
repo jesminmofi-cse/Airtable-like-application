@@ -11,11 +11,7 @@ const Dashboard = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
 
-        if (!token) {
-            console.warn('🚫 No token found. Redirecting to login...');
-            navigate('/login');
-            return;
-        }
+        if (!token) return navigate('/login');
 
         const fetchData = async () => {
             try {
