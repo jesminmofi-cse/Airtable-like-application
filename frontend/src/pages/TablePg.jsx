@@ -181,10 +181,21 @@ const TablePg = () => {
         },{ headers: { Authorization: `Bearer ${token}` 
       }});
       setMessage('Table saved successfully');
-    } catch (error) {
-      console.error('Error saving the table:', error);
-      setMessage('Error saving');
-    }};
+   } catch (error) {
+  console.error('❌ Error saving the table:', error);
+
+  // If it's an Axios error
+  if (error.response) {
+    console.error('🚨 Server responded with:', error.response.data);
+    setMessage(`Server error: ${error.response.data?.message || 'Unknown error'}`);
+  } else if (error.request) {
+    console.error('📡 No response received. Request was:', error.request);
+    setMessage('No response from server. Please check your internet or server.');
+  } else {
+    console.error('🧠 Error setting up request:', error.message);
+    setMessage(`Error: ${error.message}`);
+  }
+};
    const sortedRows=[...rows];
           if(sortField){
             sortedRows.sort((a,b)=>{
