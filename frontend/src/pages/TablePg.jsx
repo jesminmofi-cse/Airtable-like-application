@@ -185,7 +185,7 @@ const TablePg = () => {
 
     console.log("🔍 Saving payload:", payload);
 
-    await axios.post('https://airtable-backend.onrender.com/api/table', payload, {
+    await axios.post('https://airtable-backend.onrender.com/api/tables', payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -197,10 +197,10 @@ const TablePg = () => {
     console.error('❌ Error saving the table:', error);
 
     if (error.response) {
-      console.error('🚨 Server responded with:', error.response.data);
+      console.error(' Server responded with:', error.response.data);
       setMessage(`Server error: ${error.response.data?.message || 'Unknown error'}`);
     } else if (error.request) {
-      console.error('📡 No response received. Request was:', error.request);
+      console.error(' No response received. Request was:', error.request);
       setMessage('No response from server. Please check your internet or server.');
     } else {
       console.error('🧠 Error setting up request:', error.message);
