@@ -11,7 +11,10 @@ const Dashboard = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
 
-        if (!token) return navigate('/login');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
 
         const fetchData = async () => {
             try {
@@ -21,14 +24,19 @@ const Dashboard = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                setUsername(userRes.data.name);
-                localStorage.setItem('username', userRes.data.name);
+                const userNameFromResponse = userRes?.data?.name || 'User';
+                setUsername(userNameFromResponse);
+                localStorage.setItem('username', userNameFromResponse);
 
                 const tableRes = await axios.get(`${baseURL}/api/table/history`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                setTables(tableRes.data.tables);
+                const tablesData = Array.isArray(tableRes?.data?.tables)
+                    ? tableRes.data.tables
+                    : [];
+
+                setTables(tablesData);
             } catch (error) {
                 console.error('❌ Error fetching the data:', error.response?.data || error.message);
                 localStorage.removeItem('token');
@@ -59,18 +67,19 @@ const Dashboard = () => {
 
             <main className='dashboard-main'>
                 <div className='left-section'>
-                    <h1>Hello, {username || 'User'} 👋</h1>
+                    <h1>Hello, {username} 👋</h1>
                     <h2>Your Personal Table Playground</h2>
                     <button onClick={handleCreateTable}>Create New Table</button>
                 </div>
 
                 <div className='table-list'>
-                    {tables.length === 0 ? (
+                    {Array.isArray(tables) && tables.length === 0 ? (
                         <p>
                             We create the tables!!! <br />
                             Enjoy and play with rows and columns.
                         </p>
                     ) : (
+                        Array.isArray(tables) &&
                         tables.map((table, idx) => (
                             <div key={idx} className='table-card'>
                                 <h3>{table.tableName}</h3>
